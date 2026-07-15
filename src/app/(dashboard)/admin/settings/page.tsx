@@ -26,7 +26,7 @@ export default async function AdminClinicSettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={updateClinicSettings} className="space-y-6">
+          <form action={async (formData) => { "use server"; await updateClinicSettings(formData); }} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="clinic_name">Nome da Clínica / Razão Social</Label>

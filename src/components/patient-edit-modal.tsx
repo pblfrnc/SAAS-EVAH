@@ -19,10 +19,10 @@ interface PatientEditModalProps {
   patient: {
     id: string;
     name: string;
-    cpf?: string;
-    birth_date?: string;
-    phone?: string;
-    address?: string;
+    cpf?: string | null;
+    birth_date?: string | null;
+    phone?: string | null;
+    address?: string | null;
   };
   triggerVariant?: "icon" | "button";
 }
@@ -47,8 +47,8 @@ export function PatientEditModal({ patient, triggerVariant = "icon" }: PatientEd
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {triggerVariant === "icon" ? (
+      <DialogTrigger render={
+        triggerVariant === "icon" ? (
           <Button variant="outline" size="icon" className="h-8 w-8 rounded-full shrink-0" title="Editar Paciente">
             <Edit3 className="h-4 w-4 text-muted-foreground" />
           </Button>
@@ -56,8 +56,8 @@ export function PatientEditModal({ patient, triggerVariant = "icon" }: PatientEd
           <Button variant="outline" size="sm" className="gap-2 rounded-full" title="Ver e Editar Informações">
             <UserPen className="h-4 w-4" /> Editar
           </Button>
-        )}
-      </DialogTrigger>
+        )
+      } />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Ficha do Paciente</DialogTitle>

@@ -37,7 +37,7 @@ export async function getOrCreateMemedToken(doctorId: string): Promise<{ token?:
     // O CRM vem no formato "CRM/UF 123456" ou apenas números. Vamos limpar.
     // Idealmente separar estado e números, mas para sandbox podemos passar hardcoded caso falte.
     const rawCrm = doctor.crm || "123456";
-    const fullName = Array.isArray(doctor.profiles) ? doctor.profiles[0]?.full_name : doctor.profiles?.full_name;
+    const fullName = Array.isArray((doctor as any).profiles) ? (doctor as any).profiles[0]?.full_name : (doctor as any).profiles?.full_name;
     const nameParts = (fullName || "Médico Memed").split(" ");
     const firstName = nameParts[0];
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "Sobrenome";

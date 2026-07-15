@@ -278,18 +278,18 @@ export async function triggerAppointmentReminder(appointmentId: string) {
     return { error: "Consulta não encontrada" };
   }
 
-  const patientProfile = Array.isArray(appointment.patients?.profiles) 
-    ? appointment.patients?.profiles[0] 
-    : appointment.patients?.profiles;
+  const patientProfile = Array.isArray((appointment.patients as any)?.profiles) 
+    ? (appointment.patients as any)?.profiles[0] 
+    : (appointment.patients as any)?.profiles;
     
-  const doctorProfile = Array.isArray(appointment.doctors?.profiles)
-    ? appointment.doctors?.profiles[0]
-    : appointment.doctors?.profiles;
+  const doctorProfile = Array.isArray((appointment.doctors as any)?.profiles)
+    ? (appointment.doctors as any)?.profiles[0]
+    : (appointment.doctors as any)?.profiles;
 
   const patientName = patientProfile?.full_name || "Paciente";
   // O Supabase Auth guarda o email no profiles se a gente tiver cadastrado lá, senão teremos que usar um mock
-  const patientEmail = patientProfile?.email || `paciente_${appointment.patients?.id}@evah.mock`;
-  const patientPhone = appointment.patients?.phone || "(00) 00000-0000";
+  const patientEmail = patientProfile?.email || `paciente_${(appointment.patients as any)?.id}@evah.mock`;
+  const patientPhone = (appointment.patients as any)?.phone || "(00) 00000-0000";
   
   const doctorName = doctorProfile?.full_name || "Médico(a)";
   

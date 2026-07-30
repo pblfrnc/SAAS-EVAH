@@ -13,23 +13,39 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/app/actions/auth";
 import { LogoutButton } from "@/components/logout-button";
+import { createClient } from "@/lib/supabase/server";
+import { DashboardNav } from "@/components/dashboard-nav";
 
 export const dynamic = "force-dynamic";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  let role = "patient";
+  if (user) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    if (profile) {
+      role = profile.role;
+    }
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/20">
       <header className="sticky top-0 z-30 flex h-16 items-center gap-4 glass px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Activity className="h-6 w-6 text-primary" />
-          <span className="text-xl">Evah</span>
-        </Link>
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center gap-2 font-semibold mr-2 md:mr-0">
+            <Activity className="h-6 w-6 text-primary" />
+            <span className="text-xl hidden sm:inline-block">Evah</span>
+          </Link>
+          <DashboardNav role={role} />
+        </div>
         
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <Button variant="ghost" size="icon" className="rounded-full">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notificações</span>

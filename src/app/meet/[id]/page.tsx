@@ -107,8 +107,8 @@ export default async function MeetRoom(
       </header>
 
       {/* Frame de Vídeo e Sidebar */}
-      <main className={`flex-1 w-full h-full bg-[#111111] ${isDoctor && patientData ? 'grid grid-cols-1 lg:grid-cols-3' : ''}`}>
-        <div className={isDoctor && patientData ? "lg:col-span-2 h-full" : "h-full"}>
+      <main className={`flex-1 w-full ${isDoctor && patientData ? 'flex flex-col lg:grid lg:grid-cols-3 overflow-y-auto' : 'h-full bg-[#111111]'}`}>
+        <div className={isDoctor && patientData ? "h-[60vh] lg:h-full lg:col-span-2 bg-[#111111] shrink-0" : "h-full"}>
           <iframe 
             src={jitsiUrl}
             allow="camera *; microphone *; fullscreen *; display-capture *; autoplay *"
@@ -117,7 +117,7 @@ export default async function MeetRoom(
         </div>
         
         {isDoctor && patientData && (
-          <div className="hidden lg:block h-full border-l">
+          <div className="flex-1 border-t lg:border-t-0 lg:border-l bg-background min-h-[500px]">
             <TelemedicineSidebar appointmentId={params.id} patient={patientData} memedToken={memedToken} />
           </div>
         )}

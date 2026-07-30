@@ -14,6 +14,8 @@ import {
 import { logout } from "@/app/actions/auth";
 import { LogoutButton } from "@/components/logout-button";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardLayout({
   children,
 }: {

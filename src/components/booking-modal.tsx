@@ -118,139 +118,141 @@ export function BookingModal({ doctorId, doctorName, fee, availability }: { doct
       <DialogTrigger render={<Button className="w-full shadow-premium hover:shadow-premium-hover transition-all rounded-full" />}>
         Agendar Consulta
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold font-heading">Agendar com {doctorName}</DialogTitle>
-          <DialogDescription>
-            Teleconsulta com duração aproximada de 30 minutos.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-6 py-4">
-          {error && (
-            <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm font-medium animate-in fade-in zoom-in">
-              {error}
-            </div>
-          )}
+      <DialogContent className="sm:max-w-md max-h-[85dvh] p-0 flex flex-col">
+        <div className="overflow-y-auto p-4 sm:p-6 flex-1">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-2xl font-bold font-heading">Agendar com {doctorName}</DialogTitle>
+            <DialogDescription>
+              Teleconsulta com duração aproximada de 30 minutos.
+            </DialogDescription>
+          </DialogHeader>
           
-          <div className="space-y-2 flex flex-col">
-            <span className="text-sm font-medium">1. Escolha a data</span>
-            <Popover>
-              <PopoverTrigger render={
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal rounded-xl",
-                    !date && "text-muted-foreground"
-                  )}
-                />
-              }>
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={(date) => {
-                    const isPast = date < new Date(new Date().setHours(0,0,0,0));
-                    
-                    if (Array.isArray(availability)) {
-                      const dayConfig = availability.find((d: any) => d.dayId === date.getDay());
-                      if (!dayConfig || !dayConfig.isActive) return true;
-                    } else if ((availability as any)?.days) {
-                      if (!(availability as any).days.includes(date.getDay())) return true;
-                    } else {
-                      // Se não tem configuração, bloqueia fds por padrão
-                      if (date.getDay() === 0 || date.getDay() === 6) return true;
-                    }
-                    
-                    return isPast;
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+          <div className="space-y-6">
+            {error && (
+              <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm font-medium animate-in fade-in zoom-in">
+                {error}
+              </div>
+            )}
+            
+            <div className="space-y-2 flex flex-col">
+              <span className="text-sm font-medium">1. Escolha a data</span>
+              <Popover>
+                <PopoverTrigger render={
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal rounded-xl",
+                      !date && "text-muted-foreground"
+                    )}
+                  />
+                }>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={(date) => {
+                      const isPast = date < new Date(new Date().setHours(0,0,0,0));
+                      
+                      if (Array.isArray(availability)) {
+                        const dayConfig = availability.find((d: any) => d.dayId === date.getDay());
+                        if (!dayConfig || !dayConfig.isActive) return true;
+                      } else if ((availability as any)?.days) {
+                        if (!(availability as any).days.includes(date.getDay())) return true;
+                      } else {
+                        // Se não tem configuração, bloqueia fds por padrão
+                        if (date.getDay() === 0 || date.getDay() === 6) return true;
+                      }
+                      
+                      return isPast;
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
-          {date && (
-            <div className="space-y-2 animate-in fade-in zoom-in duration-300 relative">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">2. Escolha o horário</span>
-                {isLoadingSlots && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-              </div>
-              <div className={cn("grid grid-cols-3 sm:grid-cols-4 gap-2 transition-opacity", isLoadingSlots ? "opacity-50 pointer-events-none" : "opacity-100")}>
-                {generateTimeSlots(date, availability).map((t) => {
-                  const isBooked = bookedSlots.includes(t);
-                  return (
-                    <Button
-                      key={t}
-                      variant={time === t ? "default" : "outline"}
-                      className={cn(
-                        "rounded-xl transition-all", 
-                        time === t ? "shadow-md" : "",
-                        isBooked ? "opacity-30 line-through cursor-not-allowed bg-muted hover:bg-muted" : ""
-                      )}
-                      onClick={() => !isBooked && setTime(t)}
-                      disabled={isBooked}
-                    >
-                      {t}
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          
-          {date && time && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 bg-muted/30 p-4 rounded-xl border">
-              <span className="text-sm font-bold text-foreground">3. Termos Legais (Resolução CFM nº 2.314/2022)</span>
-              
-              <div className="flex items-start space-x-3">
-                <Checkbox 
-                  id="tcle" 
-                  checked={tcleConsent} 
-                  onCheckedChange={(c) => setTcleConsent(c as boolean)} 
-                  className="mt-1"
-                />
-                <div className="space-y-1 leading-none">
-                  <Label htmlFor="tcle" className="text-sm font-medium cursor-pointer">
-                    Termo de Consentimento Livre e Esclarecido (TCLE)
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Declaro que li e concordo com o atendimento por Telemedicina, ciente de suas limitações em relação ao atendimento presencial.
-                  </p>
+            {date && (
+              <div className="space-y-2 animate-in fade-in zoom-in duration-300 relative">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">2. Escolha o horário</span>
+                  {isLoadingSlots && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                </div>
+                <div className={cn("grid grid-cols-3 sm:grid-cols-4 gap-2 transition-opacity", isLoadingSlots ? "opacity-50 pointer-events-none" : "opacity-100")}>
+                  {generateTimeSlots(date, availability).map((t) => {
+                    const isBooked = bookedSlots.includes(t);
+                    return (
+                      <Button
+                        key={t}
+                        variant={time === t ? "default" : "outline"}
+                        className={cn(
+                          "rounded-xl transition-all", 
+                          time === t ? "shadow-md" : "",
+                          isBooked ? "opacity-30 line-through cursor-not-allowed bg-muted hover:bg-muted" : ""
+                        )}
+                        onClick={() => !isBooked && setTime(t)}
+                        disabled={isBooked}
+                      >
+                        {t}
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
+            )}
+            
+            {date && time && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 bg-muted/30 p-4 rounded-xl border">
+                <span className="text-sm font-bold text-foreground">3. Termos Legais (Resolução CFM nº 2.314/2022)</span>
+                
+                <div className="flex items-start space-x-3">
+                  <Checkbox 
+                    id="tcle" 
+                    checked={tcleConsent} 
+                    onCheckedChange={(c) => setTcleConsent(c as boolean)} 
+                    className="mt-1"
+                  />
+                  <div className="space-y-1 leading-none">
+                    <Label htmlFor="tcle" className="text-sm font-medium cursor-pointer">
+                      Termo de Consentimento Livre e Esclarecido (TCLE)
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      Declaro que li e concordo com o atendimento por Telemedicina, ciente de suas limitações em relação ao atendimento presencial.
+                    </p>
+                  </div>
+                </div>
 
-              <div className="flex items-start space-x-3">
-                <Checkbox 
-                  id="lgpd" 
-                  checked={lgpdConsent} 
-                  onCheckedChange={(c) => setLgpdConsent(c as boolean)} 
-                  className="mt-1"
-                />
-                <div className="space-y-1 leading-none">
-                  <Label htmlFor="lgpd" className="text-sm font-medium cursor-pointer">
-                    Política de Privacidade e Tratamento de Dados (LGPD)
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Autorizo o tratamento dos meus dados sensíveis de saúde de acordo com a LGPD, garantido o sigilo médico e criptografia ponta-a-ponta (NGS2).
-                  </p>
+                <div className="flex items-start space-x-3">
+                  <Checkbox 
+                    id="lgpd" 
+                    checked={lgpdConsent} 
+                    onCheckedChange={(c) => setLgpdConsent(c as boolean)} 
+                    className="mt-1"
+                  />
+                  <div className="space-y-1 leading-none">
+                    <Label htmlFor="lgpd" className="text-sm font-medium cursor-pointer">
+                      Política de Privacidade e Tratamento de Dados (LGPD)
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      Autorizo o tratamento dos meus dados sensíveis de saúde de acordo com a LGPD, garantido o sigilo médico e criptografia ponta-a-ponta (NGS2).
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="pt-4">
-            <Button 
-              onClick={handleBook} 
-              className="w-full h-12 text-base gap-2 rounded-full shadow-premium hover:shadow-premium-hover transition-all" 
-              disabled={isPending || !date || !time || !tcleConsent || !lgpdConsent}
-            >
-              {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Confirmar Agendamento e Prosseguir
-            </Button>
+            <div className="pt-4 pb-2">
+              <Button 
+                onClick={handleBook} 
+                className="w-full h-12 text-base gap-2 rounded-full shadow-premium hover:shadow-premium-hover transition-all" 
+                disabled={isPending || !date || !time || !tcleConsent || !lgpdConsent}
+              >
+                {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Confirmar Agendamento e Prosseguir
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

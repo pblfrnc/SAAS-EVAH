@@ -179,7 +179,7 @@ export function BookingModal({ doctorId, doctorName, fee, availability }: { doct
                 <span className="text-sm font-medium">2. Escolha o horário</span>
                 {isLoadingSlots && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
               </div>
-              <div className={cn("grid grid-cols-4 gap-2 transition-opacity", isLoadingSlots ? "opacity-50 pointer-events-none" : "opacity-100")}>
+              <div className={cn("grid grid-cols-3 sm:grid-cols-4 gap-2 transition-opacity", isLoadingSlots ? "opacity-50 pointer-events-none" : "opacity-100")}>
                 {generateTimeSlots(date, availability).map((t) => {
                   const isBooked = bookedSlots.includes(t);
                   return (

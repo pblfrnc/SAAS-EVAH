@@ -118,7 +118,7 @@ export function BookingModal({ doctorId, doctorName, fee, availability }: { doct
       <DialogTrigger render={<Button className="w-full shadow-premium hover:shadow-premium-hover transition-all rounded-full" />}>
         Agendar Consulta
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold font-heading">Agendar com {doctorName}</DialogTitle>
           <DialogDescription>
